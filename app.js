@@ -1,32 +1,34 @@
 require('dotenv').config();
-// in controllers, we use trycatch. which is async 
-// instead of adding them manually, below package helps with it.
 require('express-async-errors');
 const express = require('express');
 const app = express();
 
+// other packages
 const morgan = require('morgan');
 
+
+// DB 
 const connectDB = require('./db/connect');
+
+// Routers
+const authRouter = require('./routes/authRoutes');
 
 // middleware 
 const notFound = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
 app.use(morgan('tiny'));
-// need access to the JSON data in the req.body
 app.use(express.json());
 
+// ROUTES
+
 app.get('/', (req, res) => {
-  // http://localhost:5000/. 
   res.send('Server is running');
 });
 
-// use the middlewares
-// 404 is palced first 
-app.use(notFound);
+app.use('/api/v1/auth', authRouter);
 
-// only if we throw an error from one of the handled routes, it hits the below handler 
+app.use(notFound);
 app.use(errorHandlerMiddleware);
 
 

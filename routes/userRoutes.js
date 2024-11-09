@@ -5,13 +5,15 @@ const {
   getSingleUser,
   showCurrentUser,
   updateUser,
-  updateUserPassword  } = require('../controllers/userController');
+  updateUserPassword } = require('../controllers/userController');
+const { authenticateUser } = require('../middleware/authentication');
 
 
-router.route('/').get(getAllUsers);
+
+router.route('/').get(authenticateUser, getAllUsers);
 router.route('/showMe').get(showCurrentUser);
 router.route('/updateUser').patch(updateUser);
 router.route('/updateUserPassword').patch(updateUserPassword);
-router.route('/:id').get(getSingleUser);
+router.route('/:id').get(authenticateUser, getSingleUser);
 
 module.exports = router;

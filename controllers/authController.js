@@ -52,3 +52,20 @@ module.exports = {
   logout
 }
 
+/**
+ * When we work with a cookie, we dont need to do anything in front end so long as we are on the same domain. 
+ * We send a response, we get back a cookie, browser does the rest 
+ * When it comes to httpOnly cookies, unlike localStorage, they are not accessible in the front end with client side js
+ * Downside being, there is a maxSize limit. 
+ * 
+ * When we use react, then its in localhost:3000 and when we use node, its in localhost:5000
+ * If front end app is not on the same domain, then they do not have access to any of the resources. 
+ * 
+ * We can send a cookie back only to where it came from. 
+ * 
+ * In the front end app package.json, set "proxy": "http://localhost:5000"
+ * Now, every reuqest in front end will go to the the forward slash and so the url needs to be tweaked. 
+ * ${rooUrl}/api/v1/auth/logout ==> /api/v1/auth/logout
+ * 
+ * When it comes to production, it depends on where we host it. 
+ */

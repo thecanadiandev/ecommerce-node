@@ -3,4 +3,4 @@ const createTokenUser = (user) => {
 
 }
 
-module.exports = createTokenUser
+module.exports = { createTokenUser };

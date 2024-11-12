@@ -42,6 +42,9 @@ const deleteProduct = async (req, res) => {
     throw new CustomError.NotFoundError(`No product with id ${productId}`);
   }
   await product.remove();
+  // when we remove a product, reviews corresponding to it will also need to be removed.
+  // remove will trigger the hook in the Product model
+
   res.status(StatusCodes.OK).json({ msg: 'Success! Product removed' });
 };
 

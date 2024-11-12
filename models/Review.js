@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const reviewSchema = new mongoose.Schema({
+const ReviewSchema = new mongoose.Schema({
   rating: {
     type: Number,
     min: 1,
@@ -30,6 +30,21 @@ const reviewSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // a user can only write one review per product
-reviewSchema.index({ product: 1, user: 1 }, { unique: true });
+ReviewSchema.index({ product: 1, user: 1 }, { unique: true });
 
-module.exports = mongoose.model('Review', reviewSchema);
+ReviewSchema.statics.calculateAverageRating = async function (productId) {  
+  console.log("calculateAverageRating", productId);
+};
+
+ReviewSchema.post('save', async function () {
+  // Once we save a review, this hook is triggered
+  // console.log("post save");
+  await this.constructor.calculateAverageRating(this.product);
+});
+
+ReviewSchema.post('remove', async function () {
+  // console.log("post remove");
+  await this.constructor.calculateAverageRating(this.product);
+});
+
+module.exports = mongoose.model('Review', ReviewSchema);

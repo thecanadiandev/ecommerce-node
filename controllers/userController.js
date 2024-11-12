@@ -21,12 +21,17 @@ const showCurrentUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: req.user })
 };
 
+// Update user with user.save()
 const updateUser = async (req, res) => {
   const { name, email } = req.body;
   if (!name || !email) {
     throw new CustomError.BadRequestError('Please provide all values');
   }
-  const user = await User.findOneAndUpdate({ _id: req.user.userId }, { email, name }, { new: true, runValidators: true});
+  const user = await User.findOne({ _id: req.user.userId });
+  user.email = email;
+  user.name = name;
+  // triggers the pre save method in User model 
+  await user.save();
   
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse( { res, user: tokenUser } );
@@ -55,3 +60,16 @@ module.exports = {
   updateUser,
   updateUserPassword,
 };
+
+// UPDATE USER WITH FIND ONE AND UPDATE 
+// const updateUser = async (req, res) => {
+//   const { name, email } = req.body;
+//   if (!name || !email) {
+//     throw new CustomError.BadRequestError('Please provide all values');
+//   }
+//   const user = await User.findOneAndUpdate({ _id: req.user.userId }, { email, name }, { new: true, runValidators: true});
+  
+//   const tokenUser = createTokenUser(user);
+//   attachCookiesToResponse( { res, user: tokenUser } );
+//   res.status(StatusCodes.OK).json({ user: tokenUser });
+// };

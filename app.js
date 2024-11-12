@@ -7,7 +7,7 @@ const app = express();
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-
+const fileUpload = require('express-fileupload');
 
 // DB 
 const connectDB = require('./db/connect');
@@ -25,8 +25,9 @@ app.use(morgan('tiny'));
 app.use(express.json());
 // Once we sign the cookie, its available in the signed cookies only 
 app.use(cookieParser(process.env.JWT_SECRET));
-app.use(express.static('./public'));
+app.use(express.static('./public')); // static files
 app.use(cors());// we have to make the resources available to the front end if its not in the same domain.
+app.use(fileUpload());
 
 // ROUTES
 

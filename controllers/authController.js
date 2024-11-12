@@ -31,7 +31,7 @@ const login = async (req, res) => {
   }
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
-    throw new CustomError.UnauthenticatedError('Invalid credentials');
+    throw new CustomError.UnauthenticatedError('Invalid password credentials');
   }
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });

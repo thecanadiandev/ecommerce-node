@@ -68,6 +68,16 @@ const ProductSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   } 
-}, { timestamps: true});
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+// doesnt exist in database, but calculated on the fly 
+// Shows all reviews for one specific product
+ProductSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'product',
+  localField: '_id',
+  justOne: false,
+  // match: { rating: 5 }
+});
 
 module.exports = mongoose.model('Product', ProductSchema);

@@ -69,20 +69,37 @@ const createOrder = async (req, res) => {
     .json({ order, clientSecret: order.clientSecret });
 };
 const getAllOrders = async (req, res) => {
-  console.log("getAllOrders")
-  res.status(StatusCodes.OK).json({ message: 'get all orders' });
+  const orders = await Order.find({});
+  res.status(StatusCodes.OK).json({ orders, count: orders.length });
 };
 const getSingleOrder = async (req, res) => {
-  console.log("getSingleOrder")
-  res.status(StatusCodes.OK).json({ message: 'get single order' });
+  const { id: orderId } = req.params;
+  const order = await Order.findOne({ _id: orderId });
+  if (!order) {
+    throw new CustomError.NotFoundError(`No order with id : ${orderId}`);
+  }
+  checkPermissions(req.user, order.user);
+  res.status(StatusCodes.OK).json({ order });
 };
 const getCurrentUserOrders = async (req, res) => {
-  console.log("getCurrentUserOrders")
-  res.status(StatusCodes.OK).json({ message: 'get current user orders' });
+   const orders = await Order.find({ user: req.user.userId });
+  res.status(StatusCodes.OK).json({ orders, count: orders.length });
 };
 const updateOrder = async (req, res) => {
-  console.log("updateOrder")
-  res.status(StatusCodes.OK).json({ message: 'update order' });
+   const { id: orderId } = req.params;
+  const { paymentIntentId } = req.body;
+
+  const order = await Order.findOne({ _id: orderId });
+  if (!order) {
+    throw new CustomError.NotFoundError(`No order with id : ${orderId}`);
+  }
+  checkPermissions(req.user, order.user);
+
+  order.paymentIntentId = paymentIntentId;
+  order.status = 'paid';
+  await order.save();
+
+  res.status(StatusCodes.OK).json({ order });
 };
 
 module.exports = {
